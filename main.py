@@ -19,5 +19,9 @@ r = requests.post(f'https://txo.bitbus.network/block',
                   headers=headers,
                   data=body,
                   stream=True)
-for line in r.iter_lines():
-    print(json.loads(line))
+# for line in r.iter_lines():
+#     print(json.loads(line))
+
+with open ('tx.ndjson', 'wb') as fd:
+    for chunk in r.iter_content(chunk_size=256):
+      fd.write(chunk)
