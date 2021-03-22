@@ -1,0 +1,6 @@
+- guide: https://betterprogramming.pub/easiest-way-to-use-the-bitmex-api-with-python-fbf66dc38633
+- binance_api: https://www.binance.com/en/my/settings/api-management
+    - sdt: 0328808826
+    - email: vutienmung@gmail.com
+    - mk: Mung1234
+- python-binance: https://python-binance.readthedocs.io/en/latest/overview.html
