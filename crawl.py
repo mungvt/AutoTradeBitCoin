@@ -77,5 +77,5 @@ def get_all_bitmex(symbol, kline_size, save = False):
 
 
 if __name__ == '__main__':
-    data = get_all_binance("BTCUSDT", "5m", save=True)
+    data = get_all_binance("BTCUSDT", "1h", save=True)
     data.tail(5)
