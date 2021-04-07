@@ -70,7 +70,7 @@ def table_ref(dataset_id, tbl_id):
 
 if __name__ == '__main__':
     schema = [
-        bigquery.SchemaField('unix', 'TIMESTAMP', mode='REQUIRED'),
+        bigquery.SchemaField('unix', 'DATE', mode='REQUIRED'),
         bigquery.SchemaField('open', 'FLOAT', mode='REQUIRED'),
         bigquery.SchemaField('high', 'FLOAT', mode='REQUIRED'),
         bigquery.SchemaField('low', 'FLOAT', mode='REQUIRED'),
@@ -84,6 +84,6 @@ if __name__ == '__main__':
         bigquery.SchemaField('ignore', 'FLOAT', mode='REQUIRED')
     ]
 
-    bq_create_partition_table('btc_auto', 'btc_1h', schema, 'DAY', 'unix')
+    bq_create_partition_table('btc_auto', 'btc_1d', schema, 'DAY', 'unix')
     uri = URI_DATA
-    load_data_into_table('btc_auto', 'btc_1h', schema, 1, uri)
+    load_data_into_table('btc_auto', 'btc_1d', schema, 1, uri)
