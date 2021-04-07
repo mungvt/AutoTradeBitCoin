@@ -36,7 +36,7 @@ def bq_create_partition_table(
     print(f"Create table {tbl_ref} successfully!")
 
 
-def load_data_into_table(
+def load_data_from_gs_into_table(
         dataset_id,
         tbl_id,
         schema_,
@@ -52,6 +52,25 @@ def load_data_into_table(
     load_job = bq_client.load_table_from_uri(
         uri_file, tbl_ref, job_config=job_config
     )
+    load_job.result()
+    print(f"Load table {tbl_ref} successfully!")
+
+
+def load_data_from_local_into_table(
+        dataset_id,
+        tbl_id,
+        schema_,
+        skip_rows,
+        file_path
+):
+    job_config = bigquery.LoadJobConfig(
+        schema=schema_,
+        skip_leading_rows=skip_rows,
+        source_format=bigquery.SourceFormat.CSV,
+    )
+    tbl_ref = table_ref(dataset_id, tbl_id)
+    with open(file_path, "rb") as source_file:
+        load_job = bq_client.load_table_from_file(source_file, tbl_id, job_config=job_config)
     load_job.result()
     print(f"Load table {tbl_ref} successfully!")
 
@@ -86,4 +105,4 @@ if __name__ == '__main__':
 
     bq_create_partition_table('btc_auto', 'btc_1d', schema, 'DAY', 'unix')
     uri = URI_DATA
-    load_data_into_table('btc_auto', 'btc_1d', schema, 1, uri)
+    load_data_from_gs_into_table('btc_auto', 'btc_1d', schema, 1, uri)
