@@ -10,7 +10,7 @@ URI_DATA = config['DEFAULT']['URI_DATA']
 PROJECT_ID = config['DEFAULT']['PROJECT_ID']
 
 
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = BQ_KEY_PATH
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.path.abspath(BQ_KEY_PATH)
 project_id = PROJECT_ID
 bq_client = bigquery.Client(project=project_id)
 
