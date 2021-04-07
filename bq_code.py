@@ -8,6 +8,7 @@ config.read('config.ini')
 BQ_KEY_PATH = config['DEFAULT']['BQ_KEY_PATH']
 URI_DATA = config['DEFAULT']['URI_DATA']
 PROJECT_ID = config['DEFAULT']['PROJECT_ID']
+FILE_PATH = config['DEFAULT']['FILE_PATH']
 
 
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.path.abspath(BQ_KEY_PATH)
@@ -70,7 +71,7 @@ def load_data_from_local_into_table(
     )
     tbl_ref = table_ref(dataset_id, tbl_id)
     with open(file_path, "rb") as source_file:
-        load_job = bq_client.load_table_from_file(source_file, tbl_id, job_config=job_config)
+        load_job = bq_client.load_table_from_file(source_file, tbl_ref, job_config=job_config)
     load_job.result()
     print(f"Load table {tbl_ref} successfully!")
 
@@ -104,5 +105,7 @@ if __name__ == '__main__':
     ]
 
     bq_create_partition_table('btc_auto', 'btc_1d', schema, 'DAY', 'unix')
-    uri = URI_DATA
-    load_data_from_gs_into_table('btc_auto', 'btc_1d', schema, 1, uri)
+    # uri = URI_DATA
+    # load_data_from_gs_into_table('btc_auto', 'btc_1d', schema, 1, uri)
+    file_path = os.path.abspath(FILE_PATH)
+    load_data_from_local_into_table('btc_auto', 'btc_1d', schema, 1, file_path)
