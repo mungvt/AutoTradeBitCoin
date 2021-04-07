@@ -81,7 +81,8 @@ def get_all_binance(symbol, kline_size, save=False):
     data_df.set_index('timestamp', inplace=True)
     p = os.getcwd()
     path = os.path.join(p, 'Data')
-    os.mkdir(path, mode=0o777)
+    if not os.path.exists(path):
+        os.mkdir(path, mode=0o777)
     if save:
         data_df.to_csv(filename)
     print('All caught up..!')
@@ -89,4 +90,4 @@ def get_all_binance(symbol, kline_size, save=False):
 
 
 if __name__ == '__main__':
-    data = get_all_binance("BTCUSDT", "1d", save=True)
+    get_all_binance("BTCUSDT", "1d", save=True)
