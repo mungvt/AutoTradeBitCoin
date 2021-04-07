@@ -36,7 +36,7 @@ def minutes_of_new_data(symbol, kline_size, data, source):
 
 
 def get_all_binance(symbol, kline_size, save=False):
-    filename = '%s-%s-data.csv' % (symbol, kline_size)
+    filename = 'Data/%s-%s-data.csv' % (symbol, kline_size)
     if os.path.isfile(filename):
         data_df = pd.read_csv(filename)
     else:
@@ -79,6 +79,9 @@ def get_all_binance(symbol, kline_size, save=False):
     else:
         data_df = data
     data_df.set_index('timestamp', inplace=True)
+    p = os.getcwd()
+    path = os.path.join(p, 'Data')
+    os.mkdir(path, mode=0o777)
     if save:
         data_df.to_csv(filename)
     print('All caught up..!')
