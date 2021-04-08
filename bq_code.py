@@ -96,12 +96,7 @@ if __name__ == '__main__':
         bigquery.SchemaField('low', 'FLOAT', mode='REQUIRED'),
         bigquery.SchemaField('close', 'FLOAT', mode='REQUIRED'),
         bigquery.SchemaField('volume', 'FLOAT', mode='REQUIRED'),
-        bigquery.SchemaField('close_time', 'INTEGER', mode='REQUIRED'),
-        bigquery.SchemaField('quote_av', 'FLOAT', mode='REQUIRED'),
-        bigquery.SchemaField('trade', 'INTEGER', mode='REQUIRED'),
-        bigquery.SchemaField('tb_base_av', 'FLOAT', mode='REQUIRED'),
-        bigquery.SchemaField('tb_quote_av', 'FLOAT', mode='REQUIRED'),
-        bigquery.SchemaField('ignore', 'FLOAT', mode='REQUIRED')
+        bigquery.SchemaField('quote_av', 'FLOAT', mode='REQUIRED')
     ]
 
     bq_create_partition_table('btc_auto', 'btc_1d', schema, 'DAY', 'unix')
