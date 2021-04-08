@@ -73,6 +73,11 @@ def get_all_binance(symbol, kline_size, save=False):
                  ]
     )
     data['timestamp'] = pd.to_datetime(data['timestamp'], unit='ms')
+    data.pop('ignore')
+    data.pop('tb_quote_av')
+    data.pop('tb_base_av')
+    data.pop('trades')
+    data.pop('close_time')
     if len(data_df) > 0:
         temp_df = pd.DataFrame(data)
         data_df = data_df.append(temp_df)
