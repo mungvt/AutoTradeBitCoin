@@ -7,7 +7,7 @@ from datetime import datetime
 from dateutil import parser
 import configparser
 config = configparser.ConfigParser()
-config.read('config.ini')
+config.read('config/config.ini')
 BINANCE_API_KEY = config['DEFAULT']['BINANCE_API_KEY']
 BINANCE_API_SECRET = config['DEFAULT']['BINANCE_API_SECRET']
 binance_api_key = BINANCE_API_KEY
