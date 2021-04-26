@@ -2,9 +2,10 @@ from google.cloud import bigquery
 from google.api_core import exceptions
 import os
 import configparser
+from model import model
 
 config = configparser.ConfigParser()
-config.read('config.ini')
+config.read('config/config.ini')
 BQ_KEY_PATH = config['DEFAULT']['BQ_KEY_PATH']
 URI_DATA = config['DEFAULT']['URI_DATA']
 PROJECT_ID = config['DEFAULT']['PROJECT_ID']
@@ -88,19 +89,15 @@ def table_ref(dataset_id, tbl_id):
     return tbl_ref
 
 
-if __name__ == '__main__':
-    schema = [
-        bigquery.SchemaField('unix', 'DATE', mode='REQUIRED'),
-        bigquery.SchemaField('open', 'FLOAT', mode='REQUIRED'),
-        bigquery.SchemaField('high', 'FLOAT', mode='REQUIRED'),
-        bigquery.SchemaField('low', 'FLOAT', mode='REQUIRED'),
-        bigquery.SchemaField('close', 'FLOAT', mode='REQUIRED'),
-        bigquery.SchemaField('volume', 'FLOAT', mode='REQUIRED'),
-        bigquery.SchemaField('quote_av', 'FLOAT', mode='REQUIRED')
-    ]
+def create_all_tables():
+    bq_create_partition_table('btc_auto', 'btc_1d3', model.btc_schema, 'DAY', 'unix')
 
-    bq_create_partition_table('btc_auto', 'btc_1d2', schema, 'DAY', 'unix')
-    # uri = URI_DATA
-    # load_data_from_gs_into_table('btc_auto', 'btc_1d', schema, 1, uri)
+
+def load_btc_data_into_bq():
     file_path = os.path.abspath(FILE_PATH)
-    load_data_from_local_into_table('btc_auto', 'btc_1d2', schema, 1, file_path)
+    load_data_from_local_into_table('btc_auto', 'btc_1d3', model.btc_schema, 1, file_path)
+
+
+if __name__ == '__main__':
+    create_all_tables()
+    load_btc_data_into_bq()
