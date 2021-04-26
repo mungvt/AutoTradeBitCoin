@@ -85,7 +85,7 @@ def get_all_binance(symbol, kline_size, save=False):
         data_df = data
     data_df.set_index('timestamp', inplace=True)
     p = os.getcwd()
-    path = os.path.join(p, 'Data')
+    path = os.path.join(p, '../Data')
     if not os.path.exists(path):
         os.mkdir(path, mode=0o777)
     if save:

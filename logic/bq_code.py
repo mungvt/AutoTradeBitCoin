@@ -99,8 +99,8 @@ if __name__ == '__main__':
         bigquery.SchemaField('quote_av', 'FLOAT', mode='REQUIRED')
     ]
 
-    bq_create_partition_table('btc_auto', 'btc_1d', schema, 'DAY', 'unix')
+    bq_create_partition_table('btc_auto', 'btc_1d2', schema, 'DAY', 'unix')
     # uri = URI_DATA
     # load_data_from_gs_into_table('btc_auto', 'btc_1d', schema, 1, uri)
     file_path = os.path.abspath(FILE_PATH)
-    load_data_from_local_into_table('btc_auto', 'btc_1d', schema, 1, file_path)
+    load_data_from_local_into_table('btc_auto', 'btc_1d2', schema, 1, file_path)
