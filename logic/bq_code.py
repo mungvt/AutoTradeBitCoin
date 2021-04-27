@@ -2,7 +2,8 @@ from google.cloud import bigquery
 from google.api_core import exceptions
 import os
 import configparser
-from model import model
+import model
+import logic
 
 config = configparser.ConfigParser()
 config.read('config/config.ini')
@@ -90,14 +91,21 @@ def table_ref(dataset_id, tbl_id):
 
 
 def create_all_tables():
-    bq_create_partition_table('btc_auto', 'btc_1d3', model.btc_schema, 'DAY', 'unix')
+    if logic.is_dryrun():
+        print("crawl data")
+    else:
+        bq_create_partition_table('btc_auto', 'btc_1d3', model.btc_schema, 'DAY', 'unix')
 
 
 def load_btc_data_into_bq():
-    file_path = os.path.abspath(FILE_PATH)
-    load_data_from_local_into_table('btc_auto', 'btc_1d3', model.btc_schema, 1, file_path)
+    if logic.is_dryrun():
+        print("crawl data")
+    else:
+        file_path = os.path.abspath(FILE_PATH)
+        load_data_from_local_into_table('btc_auto', 'btc_1d3', model.btc_schema, 1, file_path)
 
 
 if __name__ == '__main__':
-    create_all_tables()
-    load_btc_data_into_bq()
+    # create_all_tables()
+    # load_btc_data_into_bq()
+    print(PROJECT_ID)
