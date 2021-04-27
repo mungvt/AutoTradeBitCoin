@@ -6,6 +6,8 @@ from binance.client import Client
 from datetime import datetime
 from dateutil import parser
 import configparser
+import logic
+
 config = configparser.ConfigParser()
 config.read('config/config.ini')
 BINANCE_API_KEY = config['DEFAULT']['BINANCE_API_KEY']
@@ -42,8 +44,8 @@ def get_all_binance(symbol, kline_size, save=False):
     else:
         data_df = pd.DataFrame()
     oldest_point, newest_point = minutes_of_new_data(symbol, kline_size, data_df, source="binance")
-    delta_min = (newest_point - oldest_point).total_seconds()/60
-    available_data = math.ceil(delta_min/binsizes[kline_size])
+    delta_min = (newest_point - oldest_point).total_seconds() / 60
+    available_data = math.ceil(delta_min / binsizes[kline_size])
     if oldest_point == datetime.strptime('1 Jan 2017', '%d %b %Y'):
         print('Downloading all available %s data for %s. Be patient..!' % (kline_size, symbol))
     else:
@@ -92,6 +94,13 @@ def get_all_binance(symbol, kline_size, save=False):
         data_df.to_csv(filename)
     print('All caught up..!')
     return data_df
+
+
+def crawl_data():
+    if logic.is_dryrun():
+        print("crawl data")
+    else:
+        get_all_binance("BTCUSDT", "1d", save=True)
 
 
 if __name__ == '__main__':
