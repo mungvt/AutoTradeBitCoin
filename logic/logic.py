@@ -6,9 +6,9 @@ import configparser
 # from luigi.contrib.bigquery import BigqueryTarget
 
 config = configparser.ConfigParser()
-config.read('config/config.ini')
-DRY_RUN = config['DEFAULT']
-PROJECT_ID = config['DEFAULT']['PROJECT_ID']
+config.read('../config/config.ini')
+DRY_RUN = config['DEFAULT'].getboolean('DRY_RUN')
+# PROJECT_ID = config['DEFAULT']['PROJECT_ID']
 
 
 def is_dryrun():
@@ -96,5 +96,5 @@ def touch_target(target, cls_name):
 
 
 if __name__ == '__main__':
-    print(DRY_RUN)
-    print(type(DRY_RUN))
+    print(int(DRY_RUN))
+
