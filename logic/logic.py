@@ -2,13 +2,20 @@ import luigi
 import os
 import re
 import configparser
+import bq_code
 # from luigi.contrib.mysqldb import MySqlTarget
-# from luigi.contrib.bigquery import BigqueryTarget
+from luigi.contrib.bigquery import BigqueryTarget
+from luigi.contrib.bigquery import BigQueryClient
+from google.cloud import bigquery
 
 config = configparser.ConfigParser()
-config.read('../config/config.ini')
+config.read('./config/config.ini')
 DRY_RUN = config['DEFAULT'].getboolean('DRY_RUN')
-# PROJECT_ID = config['DEFAULT']['PROJECT_ID']
+PROJECT_ID = config['DEFAULT']['PROJECT_ID']
+BQ_KEY_PATH = config['DEFAULT']['BQ_KEY_PATH']
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.path.abspath(BQ_KEY_PATH)
+project_id = PROJECT_ID
+bq_client = BigQueryClient(oauth_credentials=BQ_KEY_PATH, descriptor='', http_=None)
 
 
 def is_dryrun():
@@ -66,14 +73,14 @@ def create_target(target):
     update_id = "{}_{}".format(class_name, target.date)
     if is_dryrun():
         return luigi.LocalTarget("dryrun/{}.txt".format(class_name))
-    # else:
-    #     return BigqueryTarget(
-    #         project_id=PROJECT_ID,
-    #         dataset_id=,
-    #         table_id=,
-    #         client=None,
-    #         location=None
-    #     )
+    else:
+        return BigqueryTarget(
+            project_id=PROJECT_ID,
+            dataset_id='btc_auto',
+            table_id='table_update',
+            client=bq_client,
+            location=None
+        )
 
 
 def touch_target(target, cls_name):
@@ -91,10 +98,10 @@ def touch_target(target, cls_name):
                     str(target.date),
                     cls_name)
             )
-    # else:
-    #     target.output().touch()
+    else:
+        target.output().touch()
 
 
 if __name__ == '__main__':
-    print(int(DRY_RUN))
+    is_dryrun()
 

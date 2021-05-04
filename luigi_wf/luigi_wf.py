@@ -1,13 +1,13 @@
 from datetime import datetime
 import luigi
-from logic import logic, crawl, bq_code
+import crawl, bq_code, logic
 
 
 class BaseTask(luigi.Task):
     """
     Output Create a Abstract Class
     """
-    date = luigi.DateParameter(default=datetime.now())
+    date = luigi.DateSecondParameter(default=datetime.now())
 
     def output(self):
         return logic.create_target(self)
@@ -46,7 +46,8 @@ class CreateAllTables(BaseTask):
 
 class ImportData(BaseTask):
     def requires(self):
-        return CrawlData()
+        yield CrawlData()
+        yield CreateAllTables()
 
     def execute(self):
         bq_code.load_btc_data_into_bq()

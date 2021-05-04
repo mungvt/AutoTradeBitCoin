@@ -36,7 +36,9 @@ def bq_create_partition_table(
             field=part_field,
         )
         bq_client.create_table(table)
-    print(f"Create table {tbl_ref} successfully!")
+    result = f"Create table {tbl_ref} successfully!"
+    print(result)
+    return result
 
 
 def load_data_from_gs_into_table(
@@ -92,20 +94,29 @@ def table_ref(dataset_id, tbl_id):
 
 def create_all_tables():
     if logic.is_dryrun():
-        print("crawl data")
+        print("create all table")
     else:
-        bq_create_partition_table('btc_auto', 'btc_1d3', model.btc_schema, 'DAY', 'unix')
+        btc_schema = [
+            bigquery.SchemaField('unix', 'DATE', mode='REQUIRED'),
+            bigquery.SchemaField('open', 'FLOAT', mode='REQUIRED'),
+            bigquery.SchemaField('high', 'FLOAT', mode='REQUIRED'),
+            bigquery.SchemaField('low', 'FLOAT', mode='REQUIRED'),
+            bigquery.SchemaField('close', 'FLOAT', mode='REQUIRED'),
+            bigquery.SchemaField('volume', 'FLOAT', mode='REQUIRED'),
+            bigquery.SchemaField('quote_av', 'FLOAT', mode='REQUIRED')
+        ]
+        bq_create_partition_table('btc_auto', 'btc_1d4', btc_schema, 'DAY', 'unix')
 
 
 def load_btc_data_into_bq():
     if logic.is_dryrun():
-        print("crawl data")
+        print("import data")
     else:
         file_path = os.path.abspath(FILE_PATH)
-        load_data_from_local_into_table('btc_auto', 'btc_1d3', model.btc_schema, 1, file_path)
+        load_data_from_local_into_table('btc_auto', 'btc_1d4', model.btc_schema, 1, file_path)
 
 
 if __name__ == '__main__':
     # create_all_tables()
     # load_btc_data_into_bq()
-    print(PROJECT_ID)
+    create_all_tables()
