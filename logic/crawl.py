@@ -10,8 +10,9 @@ import logic
 
 config = configparser.ConfigParser()
 config.read('config/config.ini')
-BINANCE_API_KEY = config['DEFAULT']['BINANCE_API_KEY']
-BINANCE_API_SECRET = config['DEFAULT']['BINANCE_API_SECRET']
+
+BINANCE_API_KEY = config['BINANCE']['BINANCE_API_KEY']
+BINANCE_API_SECRET = config['BINANCE']['BINANCE_API_SECRET']
 binance_api_key = BINANCE_API_KEY
 binance_api_secret = BINANCE_API_SECRET
 
@@ -74,6 +75,7 @@ def get_all_binance(symbol, kline_size, save=False):
                  'ignore'
                  ]
     )
+    data = data[-10::-1]
     data['timestamp'] = pd.to_datetime(data['timestamp'], unit='ms')
     data.pop('ignore')
     data.pop('tb_quote_av')
