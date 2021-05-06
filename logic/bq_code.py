@@ -1,5 +1,4 @@
 from google.cloud import bigquery
-from google.api_core import exceptions
 import os
 import configparser
 import model
@@ -7,11 +6,14 @@ import logic
 
 config = configparser.ConfigParser()
 config.read('config/config.ini')
-BQ_KEY_PATH = config['DEFAULT']['BQ_KEY_PATH']
-URI_DATA = config['DEFAULT']['URI_DATA']
-PROJECT_ID = config['DEFAULT']['PROJECT_ID']
+
 FILE_PATH = config['DEFAULT']['FILE_PATH']
 
+BQ_KEY_PATH = config['BIGQUERY']['BQ_KEY_PATH']
+URI_DATA = config['BIGQUERY']['URI_DATA']
+PROJECT_ID = config['BIGQUERY']['PROJECT_ID']
+DATABASE = config['BIGQUERY']['DB']
+TABLE = config['BIGQUERY']['TABLE']
 
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.path.abspath(BQ_KEY_PATH)
 project_id = PROJECT_ID
@@ -26,16 +28,14 @@ def bq_create_partition_table(
         part_field
 ):
     tbl_ref = table_ref(dataset_id, tbl_id)
+    delete_table(dataset_id, tbl_id)
 
-    try:
-        bq_client.get_table(tbl_ref)
-    except exceptions.NotFound:
-        table = bigquery.Table(tbl_ref, schema=schema_)
-        table.time_partitioning = bigquery.TimePartitioning(
-            type_=part_type,
-            field=part_field,
-        )
-        bq_client.create_table(table)
+    table = bigquery.Table(tbl_ref, schema=schema_)
+    table.time_partitioning = bigquery.TimePartitioning(
+        type_=part_type,
+        field=part_field,
+    )
+    bq_client.create_table(table)
     result = f"Create table {tbl_ref} successfully!"
     print(result)
     return result
@@ -96,16 +96,7 @@ def create_all_tables():
     if logic.is_dryrun():
         print("create all table")
     else:
-        btc_schema = [
-            bigquery.SchemaField('unix', 'DATE', mode='REQUIRED'),
-            bigquery.SchemaField('open', 'FLOAT', mode='REQUIRED'),
-            bigquery.SchemaField('high', 'FLOAT', mode='REQUIRED'),
-            bigquery.SchemaField('low', 'FLOAT', mode='REQUIRED'),
-            bigquery.SchemaField('close', 'FLOAT', mode='REQUIRED'),
-            bigquery.SchemaField('volume', 'FLOAT', mode='REQUIRED'),
-            bigquery.SchemaField('quote_av', 'FLOAT', mode='REQUIRED')
-        ]
-        bq_create_partition_table('btc_auto', 'btc_1d4', btc_schema, 'DAY', 'unix')
+        bq_create_partition_table(DATABASE, TABLE, model.btc_schema, 'DAY', 'unix')
 
 
 def load_btc_data_into_bq():
@@ -113,7 +104,7 @@ def load_btc_data_into_bq():
         print("import data")
     else:
         file_path = os.path.abspath(FILE_PATH)
-        load_data_from_local_into_table('btc_auto', 'btc_1d4', model.btc_schema, 1, file_path)
+        load_data_from_local_into_table(DATABASE, TABLE, model.btc_schema, 1, file_path)
 
 
 if __name__ == '__main__':
