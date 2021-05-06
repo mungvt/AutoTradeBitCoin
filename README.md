@@ -14,6 +14,9 @@
 - Step4: Run file bq_code.py
 
 # Run Luigi:
+- Prerequisite:
+  - Install mysql-server if not yet: `sudo apt-get install mysql-server`
+  - Create user, create database and add them to config.ini file on [MYSQL] tab  
 - Open venv terminal: Run code `luigid` to start luigi
 - Dry run: Change DRY_RUN = True in config.ini file
 - Normal run: Change DRY_RUN = False in config.ini file
