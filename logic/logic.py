@@ -2,20 +2,24 @@ import luigi
 import os
 import re
 import configparser
-import bq_code
-# from luigi.contrib.mysqldb import MySqlTarget
-from luigi.contrib.bigquery import BigqueryTarget
-from luigi.contrib.bigquery import BigQueryClient
-from google.cloud import bigquery
+from luigi.contrib.mysqldb import MySqlTarget
 
 config = configparser.ConfigParser()
 config.read('./config/config.ini')
+
 DRY_RUN = config['DEFAULT'].getboolean('DRY_RUN')
-PROJECT_ID = config['DEFAULT']['PROJECT_ID']
-BQ_KEY_PATH = config['DEFAULT']['BQ_KEY_PATH']
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.path.abspath(BQ_KEY_PATH)
-project_id = PROJECT_ID
-bq_client = BigQueryClient(oauth_credentials=BQ_KEY_PATH, descriptor='', http_=None)
+
+DATABASE = config['MYSQL']['db']
+HOST = config['MYSQL']['HOST']
+USER = config['MYSQL']['USER']
+PASSWORD = config['MYSQL']['PW']
+
+uri = "mysql+pymysql://{user}:{pw}@{host}/{db}".format(
+    user=USER,
+    pw=PASSWORD,
+    host=HOST,
+    db=DATABASE
+)
 
 
 def is_dryrun():
@@ -74,12 +78,13 @@ def create_target(target):
     if is_dryrun():
         return luigi.LocalTarget("dryrun/{}.txt".format(class_name))
     else:
-        return BigqueryTarget(
-            project_id=PROJECT_ID,
-            dataset_id='btc_auto',
-            table_id='table_update',
-            client=bq_client,
-            location=None
+        return MySqlTarget(
+            host=HOST,
+            database=DATABASE,
+            user=USER,
+            password=PASSWORD,
+            table=tbl_name,
+            update_id=update_id
         )
 
 
