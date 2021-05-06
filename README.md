@@ -12,3 +12,9 @@
 - Step2: Create a venv if not exits
 - Step3: Open terminal and run this code `pip install -r requirement.txt`
 - Step4: Run file bq_code.py
+
+# Run Luigi:
+- Open venv terminal: Run code `luigid` to start luigi
+- Dry run: Change DRY_RUN = True in config.ini file
+- Normal run: Change DRY_RUN = False in config.ini file
+- Open another venv terminal and run the code: `PYTHONPATH='./logic:./model:./luigi_wf:./config' luigi --module luigi_wf AllTasks`
